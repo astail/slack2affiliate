@@ -10,3 +10,5 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.3",
   "com.github.gilbertw1" %% "slack-scala-client" % "0.2.3"
 )
+
+enablePlugins(JavaAppPackaging)
