@@ -1,0 +1,18 @@
+[Unit]
+Description=slack2affiliate
+
+[Service]
+User=astel
+Group=astel
+WorkingDirectory=/opt/slack2affiliate/slack2affiliate-0.1.0-SNAPSHOT
+Environment='JAVA_OPTS=-Xms64M -Xmx64M -XX:MaxMetaspaceSize=128M \
+-verbose:gc -Xloggc:/var/log/slack2affiliate/gc.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
+-XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M'
+EnvironmentFile=/home/astel/.bashrc
+PIDFile=/var/run/slack2affiliate/slack2affiliate.pid
+ExecStart=/bin/sh -c "exec /opt/slack2affiliate/slack2affiliate-0.1.0-SNAPSHOT/bin/slack2affiliate -Dpidfile.path=/var/run/slack2affiliate/slack2affiliate.pid -Dhttp.port=127.0.0.1 -Dhttp.port=9000 -Dconfig.file=/etc/slack2affiliate/application.conf -Dlogback.configurationFile=/etc/slack2affiliate/logback.xml >> /var/log/slack2affiliate/console.log 2>&1"
+ExecStop=/usr/bin/kill -QUIT $MAINPID
+ExecReload=/bin/kill -USR2 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,5 @@
+---
+
+slack_token: "{{ vault_slack_token }}"
+slack_channel: "{{ vault_slack_channel }}"
+affi_user_list: "{{ vault_affi_user_list }}"

@@ -1,0 +1,6 @@
+---
+
+- hosts: slack2affiliate
+  become: yes
+  roles:
+    - slack2affiliate

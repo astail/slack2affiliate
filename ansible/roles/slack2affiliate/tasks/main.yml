@@ -1,0 +1,85 @@
+---
+
+- name: install
+  yum:
+    name: "{{ item }}"
+  with_items:
+    - unzip
+#    - java
+
+- name: mkdir slack2affiliate
+  file:
+    path: "{{ item }}/slack2affiliate"
+    owner: astel
+    group: astel
+    state: directory
+  with_items:
+    - /opt
+    - /etc
+    - /var/log
+    - /var/run
+
+- name: copy /etc/tmpfiles.d/slack2affiliate.conf
+  copy:
+    src: tmpfiles_d_slack2affiliate.conf
+    dest: /etc/tmpfiles.d/slack2affiliate.conf
+
+- name: copy /etc/systemd/system/slack2affiliate
+  copy:
+    src: slack2affiliate.service
+    dest: /etc/systemd/system/slack2affiliate.service
+    owner: root
+    mode: 0644
+
+- name: systemctl daemon reload
+  systemd:
+    name: slack2affiliate
+    daemon_reload: yes
+
+- name: copy slack2affiliate-0.1.0-SNAPSHOT.zip
+  copy:
+    src: slack2affiliate-0.1.0-SNAPSHOT.zip
+    dest: /opt/slack2affiliate/slack2affiliate-0.1.0-SNAPSHOT.zip
+
+- name: delete old directory
+  file:
+    path: /opt/slack2affiliate/slack2affiliate--0.1.0-SNAPSHOT
+    state: absent
+
+- name: unzip slack2affiliate
+  unarchive:
+    remote_src: yes
+    src: /opt/slack2affiliate/slack2affiliate-0.1.0-SNAPSHOT.zip
+    dest: /opt/slack2affiliate
+
+- name: chown astel slack2affiliate
+  file:
+    path: /opt/slack2affiliate
+    owner: astel
+    group: astel
+    state: directory
+    recurse: yes
+
+- name: copy application.conf
+  template:
+    src: application.conf
+    dest: /etc/slack2affiliate/application.conf
+    owner: astel
+    group: astel
+
+- name: copy logback.xml
+  copy:
+    src: logback.xml
+    dest: /etc/slack2affiliate/logback.xml
+    owner: astel
+    group: astel
+
+- name: slack2affiliate stop
+  systemd:
+    name: slack2affiliate
+    state: stopped
+
+- name: slack2affiliate start
+  systemd:
+    name: slack2affiliate
+    state: started

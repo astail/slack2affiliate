@@ -6,4 +6,8 @@ local run
 
 deploy
 
-`sbt clean dist`
+```
+sbt clean dist
+cd ansible
+ansible-playbook -i inventory/hosts site.yml
+```
