@@ -83,7 +83,7 @@ object Main {
     val url = message drop 1 dropRight 1
 
 
-    if (url.startsWith("https://www.amazon.co.jp") || url.startsWith("https://amzn.to")) {
+    if (url.startsWith("https://amzn.to")) {
 
       // 短縮urlを展開
       HttpURLConnection setFollowRedirects false
@@ -97,6 +97,15 @@ object Main {
 
       Some("@" + user + " " + deleteTagUrl + "/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag=" + tag)
 
+    } else if (url.startsWith("https://www.amazon.co.jp")) {
+
+      // もともとついてあるtag移行の文字を消す
+      val deleteTagUrl = url match {
+        case s if s contains ("&tag=") => s replaceAll("&tag=.*", "")
+        case _ => url
+      }
+
+      Some("@" + user + " " + deleteTagUrl + "/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag=" + tag)
     } else {
       None
     }
