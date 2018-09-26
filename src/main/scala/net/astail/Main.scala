@@ -83,33 +83,28 @@ object Main {
     val url = message drop 1 dropRight 1
 
 
-    if (url.startsWith("https://amzn.to")) {
-
+    def shortUrl(url: String) = {
       // 短縮urlを展開
       HttpURLConnection setFollowRedirects false
       val openUrl = new URL(url) openConnection() getHeaderField ("Location")
 
-      // もともとついてあるtag移行の文字を消す
-      val deleteTagUrl = openUrl match {
-        case s if s contains ("&tag=") => s replaceAll("&tag=.*", "")
-        case _ => openUrl
-      }
+      normalUrl(openUrl)
+    }
 
-      Some("@" + user + " " + deleteTagUrl + "/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag=" + tag)
-
-    } else if (url.startsWith("https://www.amazon.co.jp")) {
-
+    def normalUrl(url: String) = {
       // もともとついてあるtag移行の文字を消す
       val deleteTagUrl = url match {
         case s if s contains ("&tag=") => s replaceAll("&tag=.*", "")
         case _ => url
       }
-
       Some("@" + user + " " + deleteTagUrl + "/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag=" + tag)
-    } else {
-      None
     }
 
+    url match {
+      case s if s.startsWith("https://amzn.to") => shortUrl(s)
+      case s if s.startsWith("https://www.amazon.co.jp") => normalUrl(s)
+      case _ => None
+    }
   }
 
 }
