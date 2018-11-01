@@ -5,7 +5,7 @@ Description=slack2affiliate
 User=astel
 Group=astel
 WorkingDirectory=/opt/slack2affiliate/slack2affiliate-0.1.0-SNAPSHOT
-Environment='JAVA_OPTS=-Xms64M -Xmx64M -XX:MaxMetaspaceSize=128M \
+Environment='JAVA_OPTS=-Xms128M -Xmx128M -XX:MaxMetaspaceSize=128M \
 -verbose:gc -Xloggc:/var/log/slack2affiliate/gc.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps \
 -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=10M'
 EnvironmentFile=/home/astel/.bashrc
