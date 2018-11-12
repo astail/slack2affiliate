@@ -10,8 +10,8 @@
 - name: mkdir slack2affiliate
   file:
     path: "{{ item }}/slack2affiliate"
-    owner: astel
-    group: astel
+    owner: root
+    group: root
     state: directory
   with_items:
     - /opt
@@ -52,11 +52,11 @@
     src: /opt/slack2affiliate/slack2affiliate-0.1.0-SNAPSHOT.zip
     dest: /opt/slack2affiliate
 
-- name: chown astel slack2affiliate
+- name: chown root slack2affiliate
   file:
     path: /opt/slack2affiliate
-    owner: astel
-    group: astel
+    owner: root
+    group: root
     state: directory
     recurse: yes
 
@@ -64,15 +64,15 @@
   template:
     src: application.conf
     dest: /etc/slack2affiliate/application.conf
-    owner: astel
-    group: astel
+    owner: root
+    group: root
 
 - name: copy logback.xml
   copy:
     src: logback.xml
     dest: /etc/slack2affiliate/logback.xml
-    owner: astel
-    group: astel
+    owner: root
+    group: root
 
 - name: slack2affiliate stop
   systemd:
