@@ -84,7 +84,7 @@
     name: slack2affiliate
     state: started
 
-- name: slack2affiliate restart
+- name: cron slack2affiliate restart
   cron:
     name: "slack2affiliate restart"
     minute: "0"
