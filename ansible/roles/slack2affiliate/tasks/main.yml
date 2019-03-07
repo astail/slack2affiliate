@@ -83,3 +83,11 @@
   systemd:
     name: slack2affiliate
     state: started
+
+- name: slack2affiliate restart
+  cron:
+    name: "slack2affiliate restart"
+    minute: "0"
+    hour: "4"
+    job: "systemctl restart slack2affiliate"
+    user: "root"
