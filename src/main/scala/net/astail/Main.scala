@@ -22,29 +22,21 @@ object Main {
     implicit val ec = system.dispatcher
 
     val client = SlackRtmClient(token)
-    val selfId = client.state.self.id
 
     client.onMessage { message =>
-
-      val channelId: String = message.channel
-      val channel = client.state.getChannelIdForName(botChannel).getOrElse("")
+      val channel: String = client.state.getChannelIdForName(botChannel).getOrElse("")
       val user = client.state.getUserById(message.user).map(_.name).getOrElse("")
       val text = message.text
 
       val sendMessageOption = logCheck(text, user)
 
       sendMessageOption match {
-        case Some(s) => {
-          channelId match {
-            case channel => {
-              logger.info("================================================================")
-              logger.info(s"text: $text")
-              logger.info(s"sendMessage: $s")
-              logger.info("================================================================")
-              client.sendMessage(channel, s.toString)
-            }
-            case _ =>
-          }
+        case Some(sendMessage: String) => {
+          logger.info("================================================================")
+          logger.info(s"text: $text")
+          logger.info(s"sendMessage: $sendMessage")
+          logger.info("================================================================")
+          client.sendMessage(channel, sendMessage)
         }
         case None =>
       }
