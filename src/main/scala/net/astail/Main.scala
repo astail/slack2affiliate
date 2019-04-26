@@ -47,7 +47,7 @@ object Main {
   def logCheck(message: String, user: String): Option[String] = {
     message match {
       case s if s contains "pubg" => Some(s"@$user fps")
-      case "還元率" => Some("https://affiliate.amazon.co.jp/welcome/compensation/")
+      case "紹介料率" => Some("https://affiliate.amazon.co.jp/welcome/compensation/")
       case _ => url2affi(message, user)
     }
   }
