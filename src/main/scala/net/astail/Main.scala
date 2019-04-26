@@ -16,7 +16,6 @@ object Main {
 
     logger.info("start app")
 
-
     val token = ConfigFactory.load.getString("slack_token")
     val botChannel = ConfigFactory.load.getString("slack_channel")
     implicit val system = ActorSystem("slack")
@@ -55,7 +54,8 @@ object Main {
 
   def logCheck(message: String, user: String): Option[String] = {
     message match {
-      case s if s contains ("pubg") => Some(s"@$user fps")
+      case s if s contains "pubg" => Some(s"@$user fps")
+      case "還元率" => Some("https://affiliate.amazon.co.jp/welcome/compensation/")
       case _ => url2affi(message, user)
     }
   }
@@ -65,10 +65,19 @@ object Main {
 
   // todo: tryで包む
   val setUserMap: Map[String, String] =
-    userList.split(",").map(_.replaceAll("\\(|\\)", "").trim).toList.map(_.split("=")).map(xs => xs(0) -> xs(1)).toMap
+    userList
+      .split(",")
+      .map(_.replaceAll("\\(|\\)", "").trim)
+      .toList
+      .map(_.split("="))
+      .map(xs => xs(0) -> xs(1))
+      .toMap
 
   val userMap: Map[String, String] =
-    Map((setUserMap.toList(0)._1, setUserMap.toList(1)._2), (setUserMap.toList(1)._1, setUserMap.toList(0)._2))
+    Map(
+      (setUserMap.toList(0)._1, setUserMap.toList(1)._2),
+      (setUserMap.toList(1)._1, setUserMap.toList(0)._2)
+    )
 
 
   def r = new Random().nextInt(userMap.size)
