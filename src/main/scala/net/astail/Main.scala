@@ -1,14 +1,9 @@
 package net.astail
 
-import java.net.{HttpURLConnection, URL}
-
 import akka.actor.ActorSystem
 import com.typesafe.config.ConfigFactory
 import org.slf4j.{Logger, LoggerFactory}
 import slack.rtm.SlackRtmClient
-
-import scala.util.Random
-
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -26,14 +21,14 @@ object Main {
     client.onMessage { message =>
       val channel: String = client.state.getChannelIdForName(botChannel).getOrElse("")
       val userId = client.state.getUserById(message.user).map(_.id).getOrElse("")
-      val text = message.text
+      val receiveMessage = message.text
 
-      val sendMessageOption = logCheck(text, userId)
+      val sendMessageOption = messageCheck(receiveMessage, userId)
 
       sendMessageOption match {
         case Some(sendMessage: String) => {
           logger.info("================================================================")
-          logger.info(s"text: $text")
+          logger.info(s"receiveMessage: $receiveMessage")
           logger.info(s"sendMessage: $sendMessage")
           logger.info("================================================================")
           client.sendMessage(channel, sendMessage)
@@ -44,68 +39,11 @@ object Main {
   }
 
 
-  def logCheck(message: String, userId: String): Option[String] = {
+  def messageCheck(message: String, userId: String): Option[String] = {
     message match {
-      case s if s contains "pubg" => Some(s"<@$userId> fps")
+      case "pubg" => Some(s"<@$userId> fps")
       case "紹介料率" => Some("https://affiliate.amazon.co.jp/welcome/compensation/")
-      case _ => url2affi(message, userId)
+      case _ => url2affi.check(message, userId)
     }
   }
-
-
-  val userList = ConfigFactory.load.getString("affi_user_list")
-
-  // todo: tryで包む
-  val setUserMap: Map[String, String] =
-    userList
-      .split(",")
-      .map(_.replaceAll("\\(|\\)", "").trim)
-      .toList
-      .map(_.split("="))
-      .map(xs => xs(0) -> xs(1))
-      .toMap
-
-  val userMap: Map[String, String] =
-    Map(
-      (setUserMap.toList(0)._1, setUserMap.toList(1)._2),
-      (setUserMap.toList(1)._1, setUserMap.toList(0)._2)
-    )
-
-
-  def r = new Random().nextInt(userMap.size)
-
-  def url2affi(message: String, userId: String): Option[String] = {
-    val tag = userMap.get(userId) match {
-      case Some(v) => v
-      case _ => userMap.toList(r)._2
-    }
-
-    // slackのurlは< >に囲まれているので先頭と行末を消す
-    val url = message drop 1 dropRight 1
-
-
-    def shortUrl(url: String) = {
-      // 短縮urlを展開
-      HttpURLConnection setFollowRedirects false
-      val openUrl = new URL(url) openConnection() getHeaderField ("Location")
-
-      normalUrl(openUrl)
-    }
-
-    def normalUrl(url: String) = {
-      // もともとついてあるtag移行の文字を消す
-      val deleteTagUrl = url match {
-        case s if s contains ("&tag=") => s replaceAll("&tag=.*", "")
-        case _ => url
-      }
-      Some("<@" + userId + "> " + deleteTagUrl + "/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag=" + tag)
-    }
-
-    url match {
-      case s if s.startsWith("https://amzn.to") => shortUrl(s)
-      case s if s.startsWith("https://www.amazon.co.jp") => normalUrl(s)
-      case _ => None
-    }
-  }
-
 }
