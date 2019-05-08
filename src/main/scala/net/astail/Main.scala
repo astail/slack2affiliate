@@ -25,10 +25,10 @@ object Main {
 
     client.onMessage { message =>
       val channel: String = client.state.getChannelIdForName(botChannel).getOrElse("")
-      val user = client.state.getUserById(message.user).map(_.name).getOrElse("")
+      val userId = client.state.getUserById(message.user).map(_.id).getOrElse("")
       val text = message.text
 
-      val sendMessageOption = logCheck(text, user)
+      val sendMessageOption = logCheck(text, userId)
 
       sendMessageOption match {
         case Some(sendMessage: String) => {
@@ -44,11 +44,11 @@ object Main {
   }
 
 
-  def logCheck(message: String, user: String): Option[String] = {
+  def logCheck(message: String, userId: String): Option[String] = {
     message match {
-      case s if s contains "pubg" => Some(s"@$user fps")
+      case s if s contains "pubg" => Some(s"<@$userId> fps")
       case "紹介料率" => Some("https://affiliate.amazon.co.jp/welcome/compensation/")
-      case _ => url2affi(message, user)
+      case _ => url2affi(message, userId)
     }
   }
 
@@ -74,8 +74,8 @@ object Main {
 
   def r = new Random().nextInt(userMap.size)
 
-  def url2affi(message: String, user: String): Option[String] = {
-    val tag = userMap.get(user) match {
+  def url2affi(message: String, userId: String): Option[String] = {
+    val tag = userMap.get(userId) match {
       case Some(v) => v
       case _ => userMap.toList(r)._2
     }
@@ -98,7 +98,7 @@ object Main {
         case s if s contains ("&tag=") => s replaceAll("&tag=.*", "")
         case _ => url
       }
-      Some("@" + user + " " + deleteTagUrl + "/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag=" + tag)
+      Some("<@" + userId + "> " + deleteTagUrl + "/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag=" + tag)
     }
 
     url match {
