@@ -43,22 +43,21 @@ object url2affi {
     }
   }
 
+
   def check(message: String, userId: String): Option[String] = {
     val tag = userMap.get(userId) match {
       case Some(v) => v
       case _ => userMap.toList(r)._2
     }
-
-    def sendUrl(url: String) = {
-      Some("<@" + userId + "> " + url + "/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag=" + tag)
-    }
+    val user = "<@" + userId + "> "
+    val ref = "/ref=as_li_ss_tl?ie=UTF8&linkCode=sl1&tag="
 
     // slackのurlは< >に囲まれているので先頭と行末を消す
     val url = message drop 1 dropRight 1
 
     url match {
-      case s if s.startsWith("https://amzn.to") => sendUrl(shortUrl(s))
-      case s if s.startsWith("https://www.amazon.co.jp") => sendUrl(normalUrl(s))
+      case s if s.startsWith("https://amzn.to") => Some(user + shortUrl(s) + ref + tag)
+      case s if s.startsWith("https://www.amazon.co.jp") => Some(user + normalUrl(s) + ref + tag)
       case _ => None
     }
   }
