@@ -9,7 +9,6 @@ import scala.util.Random
 object url2affi {
   val userList = ConfigFactory.load.getString("affi_user_list")
 
-  // todo: tryで包む
   val setUserMap: Map[String, String] =
     userList
       .split(",")
@@ -30,7 +29,7 @@ object url2affi {
   def shortUrl(url: String) = {
     // 短縮urlを展開
     HttpURLConnection setFollowRedirects false
-    val openUrl = new URL(url) openConnection() getHeaderField ("Location")
+    val openUrl = new URL(url) openConnection() getHeaderField "Location"
 
     normalUrl(openUrl)
   }
@@ -38,7 +37,7 @@ object url2affi {
   def normalUrl(url: String) = {
     // もともとついてあるtag移行の文字を消す
     url match {
-      case s if s contains ("&tag=") => s replaceAll("&tag=.*", "")
+      case s if s contains "&tag=" => s replaceAll("&tag=.*", "")
       case _ => url
     }
   }
