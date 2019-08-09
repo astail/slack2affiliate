@@ -1,11 +1,8 @@
 ---
 
-- name: install
+- name: install unzip
   yum:
-    name: "{{ item }}"
-  with_items:
-    - unzip
-#    - java
+    name: unzip
 
 - name: mkdir slack2affiliate
   file:
@@ -51,14 +48,6 @@
     remote_src: yes
     src: /opt/slack2affiliate/slack2affiliate-0.1.0-SNAPSHOT.zip
     dest: /opt/slack2affiliate
-
-- name: chown root slack2affiliate
-  file:
-    path: /opt/slack2affiliate
-    owner: root
-    group: root
-    state: directory
-    recurse: yes
 
 - name: copy application.conf
   template:
