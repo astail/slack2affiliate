@@ -66,11 +66,6 @@ object url2affi {
 
     val optionTag: Option[String] = optionUser match {
       case Some(s) => setUserMap get s
-      case None => None
-    }
-
-    val userOptionTag: Option[String] = optionTag match {
-      case Some(s) => Some(s)
       case None => optionUser match {
         case Some("t") => Some(setUserMap.toList(0)._2)
         case Some("a") => Some(setUserMap.toList(1)._2)
@@ -78,7 +73,7 @@ object url2affi {
       }
     }
 
-    val tag: String = userOptionTag match {
+    val tag: String = optionTag match {
       case Some(s) => s
       case None => createTag(userId)
     }
