@@ -57,6 +57,7 @@ object url2affi {
 
     // slackのurlは< >に囲まれているので先頭と行末を消す
     val url = splitMessage.head drop 1 dropRight 1
+
     val optionUser: Option[String] = {
       if (splitMessage.length >= 2)
         splitMessage.reverse.headOption
@@ -64,17 +65,10 @@ object url2affi {
         None
     }
 
-    val optionTag: Option[String] = optionUser match {
-      case Some(s) => setUserMap get s
-      case None => optionUser match {
-        case Some("t") => Some(setUserMap.toList(0)._2)
-        case Some("a") => Some(setUserMap.toList(1)._2)
-        case None => None
-      }
-    }
-
-    val tag: String = optionTag match {
-      case Some(s) => s
+    val tag: String = optionUser match {
+      case Some("t") => setUserMap.toList(0)._2
+      case Some("a") => setUserMap.toList(1)._2
+      case Some(s) => setUserMap getOrElse(s, createTag(userId))
       case None => createTag(userId)
     }
 
