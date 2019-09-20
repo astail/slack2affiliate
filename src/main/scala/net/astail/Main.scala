@@ -37,9 +37,11 @@ object Main {
   }
 
   def messageCheck(message: String, userId: String): Option[String] = {
+    val sList = List("紹介", "率")
     message match {
       case "pubg" => Some(s"<@$userId> fps")
-      case "紹介料率" => Some("https://affiliate.amazon.co.jp/welcome/compensation/")
+      case "fps" => Some(s"<@$userId> r6s")
+      case s if sList.exists(s.startsWith) => Some("https://affiliate.amazon.co.jp/welcome/compensation/")
       case s if s.contains("amzn.to") | s.contains("www.amazon.co.jp") => url2affi.check(message, userId)
       case _ => None
     }
