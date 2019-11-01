@@ -26,8 +26,8 @@ object Main {
       sendMessageOption match {
         case Some(sendMessage: String) =>
           logger.info("================================================================")
-          logger.info(s"channel: ${channel}, receiveMessage: $receiveMessage")
-          logger.info(s"channel: ${channel}, sendMessage: $sendMessage")
+          logger.info(s"channel: ${channel}, receiveMessage: ${receiveMessage}")
+          logger.info(s"channel: ${channel}, sendMessage: ${sendMessage}")
           logger.info("================================================================")
 
           client.sendMessage(channel, sendMessage)
