@@ -12,14 +12,13 @@ object Main {
     logger.info("start app")
 
     val token = ConfigFactory.load.getString("slack_token")
-    val botChannel = ConfigFactory.load.getString("slack_channel")
     implicit val system = ActorSystem("slack")
     implicit val ec = system.dispatcher
 
     val client = SlackRtmClient(token)
 
     client.onMessage { message =>
-      val channel: String = client.state.getChannelIdForName(botChannel).getOrElse("")
+      val channel: String = message.channel
       val userId = client.state.getUserById(message.user).map(_.id).getOrElse("")
       val receiveMessage = message.text
       val sendMessageOption = messageCheck(receiveMessage, userId)
@@ -27,9 +26,10 @@ object Main {
       sendMessageOption match {
         case Some(sendMessage: String) =>
           logger.info("================================================================")
-          logger.info(s"receiveMessage: $receiveMessage")
-          logger.info(s"sendMessage: $sendMessage")
+          logger.info(s"channel: ${channel}, receiveMessage: ${receiveMessage}")
+          logger.info(s"channel: ${channel}, sendMessage: ${sendMessage}")
           logger.info("================================================================")
+
           client.sendMessage(channel, sendMessage)
         case None =>
       }
